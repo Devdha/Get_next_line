@@ -6,7 +6,7 @@
 /*   By: dha <dha@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 15:39:50 by dha               #+#    #+#             */
-/*   Updated: 2021/12/04 21:46:16 by dha              ###   ########seoul.kr  */
+/*   Updated: 2021/12/05 20:41:13 by dha              ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,17 @@ char	*get_next_line(int fd)
 	int			len;
 	int			i;
 
-	if (backup == 0)
-	{
-		len = 0;
+	len = ft_strlen(backup);
+	if (len == 0 && backup == 0)
 		backup = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	}
 	else
-	{
-		len = ft_strlen(backup)
-		ft_realloc(backup, len + 1, len + BUFFER_SIZE + 1);
-	}
+		backup = ft_realloc(backup, len + 1, len + BUFFER_SIZE + 1);
 	i = 0;
 	while (i < BUFFER_SIZE)
-		read(fd, BUFFER_SIZE + len++, 1);
-	
+		read(fd, backup + (len + i++), 1);
+	i = 0;
+	while (*(backup + i))
+	{
+		
+	}
 }
