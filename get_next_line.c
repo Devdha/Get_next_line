@@ -6,7 +6,7 @@
 /*   By: dha <dha@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 15:39:50 by dha               #+#    #+#             */
-/*   Updated: 2021/12/05 20:41:13 by dha              ###   ########seoul.kr  */
+/*   Updated: 2021/12/06 21:26:52 by dha              ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,29 @@
 
 char	*get_next_line(int fd)
 {
-	static char	*backup;
-	char		*ret;
-	int			len;
+	static char	*backup[OPEN_MAX];
+	char		*save;
+	char		*tmp;
 	int			i;
 
-	len = ft_strlen(backup);
-	if (len == 0 && backup == 0)
-		backup = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	else
-		backup = ft_realloc(backup, len + 1, len + BUFFER_SIZE + 1);
-	i = 0;
-	while (i < BUFFER_SIZE)
-		read(fd, backup + (len + i++), 1);
-	i = 0;
-	while (*(backup + i))
+	if (fd > OPEN_MAX || BUFFER_SIZE < 1 || 0)
+	if (backup[fd] == 0)
+		backup[fd] = ft_strdup("");
+	if (backup[fd] == 0)
+		return (0);
+	while (1)
 	{
+		i = 0;
+		save = 
+		if ((read(fd, save, BUFFER_SIZE)) < 1)
+			return (0);
+		save[i] = '\0';
+		backup[fd] = ft_strjoinf(backup[fd], save);
+		i = 0;
+		while (backup[fd][i] != '\n' || backup[fd][i] != '\0')
+			i++;
+		if (backup[fd][i] == '\n' || backup[fd][i] == -1)
+			return backup[fd]; // 수정
 		
 	}
 }
