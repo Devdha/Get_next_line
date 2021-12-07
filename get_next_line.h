@@ -6,7 +6,7 @@
 /*   By: dha <dha@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 15:39:51 by dha               #+#    #+#             */
-/*   Updated: 2021/12/06 20:00:35 by dha              ###   ########seoul.kr  */
+/*   Updated: 2021/12/07 21:16:04 by dha              ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <limits.h>
+
+# ifndef OPEN_MAX
+#  define OPEN_MAX 10240
+# endif
 
 char	*get_next_line(int fd);
 char	*ft_strdup(const char *s1);
