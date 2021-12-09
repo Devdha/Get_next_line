@@ -6,7 +6,7 @@
 /*   By: dha <dha@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 19:33:03 by dha               #+#    #+#             */
-/*   Updated: 2021/12/09 20:04:41 by dha              ###   ########seoul.kr  */
+/*   Updated: 2021/12/09 20:12:54 by dha              ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ char	*get_next_line(int fd)
 {
 	static char	*backup[OPEN_MAX];
 	char		*buffer;
-	int			len;
+	ssize_t		len;
 
 	if (fd >= OPEN_MAX || fd < 0 || BUFFER_SIZE < 1)
 		return (0);
@@ -93,7 +93,9 @@ char	*get_next_line(int fd)
 	if (len < 1)
 	{
 		free(buffer);
-		return (0);
+		if (len == -1)
+			return (0);
+		return (get_line(backup, fd));
 	}
 	backup[fd] = ft_strjoin(backup[fd], buffer);
 	if (backup[fd] == 0)
