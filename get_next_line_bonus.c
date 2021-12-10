@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dha <dha@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 16:08:01 by dha               #+#    #+#             */
-/*   Updated: 2021/12/10 21:49:12 by dha              ###   ########seoul.kr  */
+/*   Updated: 2021/12/10 21:50:24 by dha              ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_strjoin(char *s1, char *s2)
 {
@@ -34,6 +34,19 @@ char	*ft_strjoin(char *s1, char *s2)
 	str[i] = '\0';
 	free(s1);
 	return (str);
+}
+
+static int	ft_strchr(const char *s, int c)
+{
+	if (s == 0)
+		return (0);
+	while (*s)
+	{
+		if (*s == (char) c)
+			return (1);
+		s++;
+	}
+	return (0);
 }
 
 char	*split_backup(char	**backup, int fd)
@@ -75,7 +88,7 @@ char	*get_next_line(int fd)
 	char		*buffer;
 	int			len;
 
-	if (fd < 0 || fd >= 10240 || BUFFER_SIZE < 1)
+	if (fd < 0 || fd >= 12400 || BUFFER_SIZE < 1)
 		return (0);
 	if (backup[fd] == 0)
 		backup[fd] = ft_strdup("");

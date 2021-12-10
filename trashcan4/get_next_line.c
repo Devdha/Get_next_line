@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dha <dha@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/10 16:08:01 by dha               #+#    #+#             */
-/*   Updated: 2021/12/10 21:49:12 by dha              ###   ########seoul.kr  */
+/*   Created: 2021/12/10 14:41:05 by dha               #+#    #+#             */
+/*   Updated: 2021/12/10 18:05:22 by dha              ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strjoin(char *s1, char *s2)
+static char	*ft_strjoin(char *s1, char *s2)
 {
 	size_t	i;
 	size_t	len;
@@ -33,73 +33,90 @@ char	*ft_strjoin(char *s1, char *s2)
 	}
 	str[i] = '\0';
 	free(s1);
+	free(s2);
 	return (str);
 }
 
-char	*split_backup(char	**backup, int fd)
+static int	ft_strchr(const char *s, int c)
+{
+	if (s == 0)
+		return (0);
+	while (*s)
+	{
+		if (*s == (char) c)
+			return (1);
+		s++;
+	}
+	return (0);
+}
+
+static char	*split_backup(char **backup, int fd)
 {
 	char	*line;
 	char	*new_backup;
 	int		i;
 
 	i = 0;
-	if (*backup[fd] == 0)
-	{
-		free(backup[fd]);
-		backup[fd] = 0;
-		return (0);
-	}
-	while (backup[fd][i] != '\0')
-	{
-		if (backup[fd][i] == '\n')
-			break;
+	while (backup[fd][i] != '\n')
 		i++;
-	}
 	line = ft_substr(backup[fd], 0, i + 1);
-	if (line == 0)
+	new_backup = ft_substr(backup[fd], i + 1, ft_strlen(backup[fd]) - (i));
+	if (line == 0 || new_backup == 0)
 		return (0);
-	new_backup = ft_substr(backup[fd], i + 1, ft_strlen(backup[fd]) - (i + 1));
-	if (new_backup == 0)
-	{
-		free(line);
-		return (0);
-	}
 	free(backup[fd]);
 	backup[fd] = new_backup;
 	return (line);
 }
 
+char	*get_line(char	**backup, int fd)
+{
+	char	*buffer;
+	int		len;
+
+	len = 1;
+	while (len > 0)
+	{
+		if (ft_strchr(backup[fd], '\n'))
+			return (split_backup(backup, fd));
+		buffer = (char *) malloc(sizeof(char) * BUFFER_SIZE + 1);
+		if (buffer == 0)
+			return (0);
+		len = read(fd, buffer, BUFFER_SIZE);
+		if (len < 1)
+		{
+			free(buffer);
+			return (0);
+		}
+		buffer[len] = '\0';
+		backup[fd] = ft_strjoin(backup[fd], buffer);
+		if (backup[fd] == 0)
+			return (0);
+		if (len < BUFFER_SIZE)
+			return (backup[fd]);
+	}
+	return (0);
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*backup[10240];
-	char		*buffer;
-	int			len;
+	char		*line;
 
-	if (fd < 0 || fd >= 10240 || BUFFER_SIZE < 1)
+	if (fd < 0 || fd > 10240 || BUFFER_SIZE < 1)
 		return (0);
 	if (backup[fd] == 0)
 		backup[fd] = ft_strdup("");
 	if (backup[fd] == 0)
 		return (0);
-	buffer = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (buffer == 0)
+	line = get_line(backup, fd);
+	if (line == 0)
 	{
-		free(backup[fd]);
+		if (backup[fd] != 0)
+		{
+			free(backup[fd]);
+			backup[fd] = 0;
+		}
 		return (0);
 	}
-	len = 1;
-	while (len != 0 && !ft_strchr(backup[fd], '\n'))
-	{
-		len = read(fd, buffer, BUFFER_SIZE);
-		if (len == -1)
-		{
-			free(buffer);
-			free(backup[fd]);
-			return (0);
-		}
-		buffer[len] = '\0';
-		backup[fd] = ft_strjoin(backup[fd], buffer);
-	}
-	free(buffer);
-	return (split_backup(backup, fd));
+	return (line);
 }
