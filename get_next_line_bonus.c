@@ -6,29 +6,31 @@
 /*   By: dha <dha@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 16:08:01 by dha               #+#    #+#             */
-/*   Updated: 2021/12/10 21:50:24 by dha              ###   ########seoul.kr  */
+/*   Updated: 2021/12/11 16:58:40 by dha              ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-char	*ft_strjoin(char *s1, char *s2)
+static char	*ft_strjoin(char *s1, char *s2)
 {
 	size_t	i;
+	size_t	s1_len;
 	size_t	len;
 	char	*str;
 
-	len = ft_strlen(s1) + ft_strlen(s2);
+	s1_len = ft_strlen(s1);
+	len = s1_len + ft_strlen(s2);
 	str = (char *) malloc(sizeof(char) * (len + 1));
 	if (str == 0)
 		return (0);
 	i = 0;
 	while (i < len)
 	{
-		if (i < ft_strlen(s1))
+		if (i < s1_len)
 			str[i] = s1[i];
 		else
-			str[i] = s2[i - ft_strlen(s1)];
+			str[i] = s2[i - s1_len];
 		i++;
 	}
 	str[i] = '\0';
@@ -36,38 +38,33 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (str);
 }
 
-static int	ft_strchr(const char *s, int c)
+static int	count_char(char *str)
 {
-	if (s == 0)
-		return (0);
-	while (*s)
+	int	i;
+
+	i = 0;
+	while (str[i] != '\0')
 	{
-		if (*s == (char) c)
-			return (1);
-		s++;
+		if (str[i] == '\n')
+			break ;
+		i++;
 	}
-	return (0);
+	return (i);
 }
 
-char	*split_backup(char	**backup, int fd)
+static char	*split_backup(char	**backup, int fd)
 {
 	char	*line;
 	char	*new_backup;
 	int		i;
 
-	i = 0;
 	if (*backup[fd] == 0)
 	{
 		free(backup[fd]);
 		backup[fd] = 0;
 		return (0);
 	}
-	while (backup[fd][i] != '\0')
-	{
-		if (backup[fd][i] == '\n')
-			break;
-		i++;
-	}
+	i = count_char(backup[fd]);
 	line = ft_substr(backup[fd], 0, i + 1);
 	if (line == 0)
 		return (0);
@@ -82,24 +79,10 @@ char	*split_backup(char	**backup, int fd)
 	return (line);
 }
 
-char	*get_next_line(int fd)
+static int	update_backup(char **backup, int fd, char *buffer)
 {
-	static char	*backup[10240];
-	char		*buffer;
-	int			len;
+	int	len;
 
-	if (fd < 0 || fd >= 12400 || BUFFER_SIZE < 1)
-		return (0);
-	if (backup[fd] == 0)
-		backup[fd] = ft_strdup("");
-	if (backup[fd] == 0)
-		return (0);
-	buffer = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (buffer == 0)
-	{
-		free(backup[fd]);
-		return (0);
-	}
 	len = 1;
 	while (len != 0 && !ft_strchr(backup[fd], '\n'))
 	{
@@ -113,6 +96,28 @@ char	*get_next_line(int fd)
 		buffer[len] = '\0';
 		backup[fd] = ft_strjoin(backup[fd], buffer);
 	}
+	return (1);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	*backup[12800];
+	char		*buffer;
+
+	if (fd < 0 || fd >= 12800 || BUFFER_SIZE < 1)
+		return (0);
+	if (backup[fd] == 0)
+		backup[fd] = ft_strdup("");
+	if (backup[fd] == 0)
+		return (0);
+	buffer = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (buffer == 0)
+	{
+		free(backup[fd]);
+		return (0);
+	}
+	if (!update_backup(backup, fd, buffer))
+		return (0);
 	free(buffer);
 	return (split_backup(backup, fd));
 }

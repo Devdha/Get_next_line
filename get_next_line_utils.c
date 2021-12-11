@@ -6,7 +6,7 @@
 /*   By: dha <dha@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 20:06:51 by dha               #+#    #+#             */
-/*   Updated: 2021/12/09 21:38:31 by dha              ###   ########seoul.kr  */
+/*   Updated: 2021/12/11 13:00:37 by dha              ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,19 @@ size_t	ft_strlen(const char *s)
 	while (*cp)
 		cp++;
 	return (cp - s);
+}
+
+int	ft_strchr(const char *s, int c)
+{
+	if (s == 0)
+		return (0);
+	while (*s)
+	{
+		if (*s == (char) c)
+			return (1);
+		s++;
+	}
+	return (0);
 }
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
