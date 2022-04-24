@@ -6,7 +6,7 @@
 /*   By: dha <dha@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 16:08:01 by dha               #+#    #+#             */
-/*   Updated: 2021/12/11 16:57:20 by dha              ###   ########seoul.kr  */
+/*   Updated: 2022/03/19 15:51:12 by dha              ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ static int	update_backup(char **backup, int fd, char *buffer)
 		}
 		buffer[len] = '\0';
 		backup[fd] = ft_strjoin(backup[fd], buffer);
+		if (len < BUFFER_SIZE)
+			return (1);
 	}
 	return (1);
 }
